@@ -34,17 +34,23 @@ const generateQuestionsData = (): QuestionData[] => {
   const questionsData: QuestionData[] = [];
 
   for (let i = 1; i <= 100; i++) {
-    const num1 = Math.floor(Math.random() * 100000000);
+    const num1 = Math.floor(Math.random() * 1000000000);
     let num2 = num1;
     while (num2 === num1 || !isOneDigitDifference(num1, num2)) {
       num2 = Math.floor(Math.random() * 100000000);
     }
 
+    // Tentukan secara acak apakah jawabannya "sama" atau "beda"
+    const isSame: boolean = Math.random() < 0.5; // 50% kemungkinan "sama"
+
+    // Tentukan jawaban berdasarkan isSame
+    const answer: string = isSame ? 'sama' : 'beda';
+
     const question: QuestionData = {
       id: i,
       question: `\n${num1}\u00A0\u00A0\u00A0${num2}\n`,
       options: ['sama', 'beda'],
-      answer: 'beda'
+      answer: answer // Gunakan jawaban yang sudah ditentukan
     };
 
     questionsData.push(question);
@@ -52,6 +58,7 @@ const generateQuestionsData = (): QuestionData[] => {
 
   return questionsData;
 };
+
 
 const Home: React.FC = () => {
   const [answers, setAnswers] = useState<string[]>(new Array(100).fill(''));
