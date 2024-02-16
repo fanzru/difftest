@@ -22,7 +22,7 @@ const Question: React.FC<QuestionProps> = ({ index, question, submitted, answer,
   };
 
   return (
-    <div className="mb-5 border-2 p-4 text-black">
+    <div className="mb-5 border-2 p-4 text-black mx-4">
       <p className="font-bold">{question.question}</p>
       {question.options.map((option, optionIndex) => (
         <div key={optionIndex} className="flex items-center">

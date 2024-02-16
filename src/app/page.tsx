@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Question from './components/questions2';
 
 interface QuestionData {
@@ -9,7 +9,6 @@ interface QuestionData {
   answer: string;
 }
 
-// Fungsi untuk memeriksa apakah dua angka hanya berbeda satu digit
 function isOneDigitDifference(num1: number, num2: number): boolean {
   const str1 = num1.toString();
   const str2 = num2.toString();
@@ -31,39 +30,58 @@ function isOneDigitDifference(num1: number, num2: number): boolean {
   return diffCount === 1;
 }
 
-// Inisialisasi array untuk pertanyaan
-const questionsData: QuestionData[] = [];
+const generateQuestionsData = (): QuestionData[] => {
+  const questionsData: QuestionData[] = [];
 
-// Generate 100 pertanyaan
-for (let i = 1; i <= 100; i++) {
-  // Generate dua angka acak
-  const num1 = Math.floor(Math.random() * 100000000);
-  let num2 = num1;
-  while (num2 === num1 || !isOneDigitDifference(num1, num2)) {
-    num2 = Math.floor(Math.random() * 100000000);
+  for (let i = 1; i <= 100; i++) {
+    const num1 = Math.floor(Math.random() * 100000000);
+    let num2 = num1;
+    while (num2 === num1 || !isOneDigitDifference(num1, num2)) {
+      num2 = Math.floor(Math.random() * 100000000);
+    }
+
+    const question: QuestionData = {
+      id: i,
+      question: `\n${num1}\u00A0\u00A0\u00A0${num2}\n`,
+      options: ['sama', 'beda'],
+      answer: 'beda'
+    };
+
+    questionsData.push(question);
   }
 
-  const question: QuestionData = {
-    id: i,
-    question: `\n${num1}\u00A0\u00A0\u00A0${num2}\n`,
-    options: ['sama', 'beda'],
-    answer: 'beda' // Jika angka berbeda, jawabannya akan selalu 'beda'
-  };
+  return questionsData;
+};
 
-  questionsData.push(question);
-}
-
-
-export default function Home() {
-  // Fungsi untuk mengacak array
-// Fungsi untuk mengacak array
-// Array kata-kata sehari-hari
-
-
-  const [answers, setAnswers] = useState<string[]>(new Array(questionsData.length).fill(''));
+const Home: React.FC = () => {
+  const [answers, setAnswers] = useState<string[]>(new Array(100).fill(''));
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [endTime, setEndTime] = useState<number | null>(null);
+  const [questionsData, setQuestionsData] = useState<QuestionData[]>([]);
+  const [timer, setTimer] = useState<number>(0);
+  
+  const [start, setStart] = useState(false);
+  useEffect(() => {
+    setQuestionsData(generateQuestionsData());
+  }, []);
 
+    // Effect to update timer
+    useEffect(() => {
+      let timerID: NodeJS.Timeout;
+  
+      if (start && !submitted) {
+        timerID = setInterval(() => {
+          setTimer(prevTimer => prevTimer + 1);
+        }, 1000); // Update timer every second
+      }
+  
+      return () => {
+        clearInterval(timerID);
+      };
+    }, [start, submitted]);
+  
   const handleAnswerChange = (index: number, answer: string) => {
     const newAnswers = [...answers];
     newAnswers[index] = answer;
@@ -72,8 +90,8 @@ export default function Home() {
 
   const handleSubmit = () => {
     setSubmitted(true);
-    
-    // Calculate score
+    setEndTime(Date.now());
+
     let correctAnswers = 0;
     for (let i = 0; i < questionsData.length; i++) {
       if (answers[i] === questionsData[i].answer) {
@@ -81,35 +99,75 @@ export default function Home() {
       }
     }
     setScore(correctAnswers);
-    
+  };
+
+  const handleStart = () => {
+    if (questionsData.length === 100) {
+      setSubmitted(false);
+      setStartTime(Date.now());
+      setTimer(0);
+    }
+    setStart(true)
   };
 
   return (
     <div className='bg-white text-black'>
       <div className="container mx-auto mt-10 bg-white">
-      <h1 className="text-3xl font-bold mb-5">Quiz</h1>
-      {questionsData.map((question, index) => (
-        <Question
-          key={question.id}
-          index={index}
-          question={question}
-          submitted={submitted}
-          answer={answers[index]}
-          onAnswerChange={handleAnswerChange}
-        />
-      ))}
-      <button
-        onClick={handleSubmit}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5"
-      >
-        Submit
-      </button>
-      {submitted && (
-        <p className="mt-5">
-          Skor Anda: {score} / {questionsData.length}
-        </p>
-      )}
-    </div>
+        <h1 className="text-3xl font-bold mb-5 text-center w-full">Quiz</h1>
+    
+        <div className='w-full flex justify-center items-center'>
+          {!submitted && questionsData.length === 100? (
+              <button
+                onClick={handleStart}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 mb-5"
+              >
+                Start
+              </button>
+            ):<p>Sedang Proses Generate Soal!</p>}
+        </div>
+      {
+        questionsData.length === 100? 
+        <div className='w-full flex items-center justify-center'>
+          <div className='px-10 border-2 mt-2 mb-2'>{`time : ${timer}`}</div>
+        </div>
+        :
+        <></>
+      }
+        {start ? questionsData.map((question, index) => (
+          <Question
+            key={question.id}
+            index={index}
+            question={question}
+            submitted={submitted}
+            answer={answers[index]}
+            onAnswerChange={handleAnswerChange}
+          />
+        )):<></>}
+        <div className='w-full flex justify-center items-center flex-col mb-10'>
+           {
+            start?  <button
+            disabled={submitted || questionsData.length !== 100}
+            onClick={handleSubmit}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5"
+          >
+          Submit
+        </button> : <></>
+           }
+          <div>
+            {submitted && (
+              <p className="mt-5 mb-10 text-center">
+                Skor Anda: {score} / {questionsData.length} <br />
+                Waktu yang diperlukan: {endTime && startTime ? `${(endTime - startTime) / 1000} detik` : '0 detik'}
+              </p>
+            )}
+          </div>
+        <div>
+            
+        </div>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default Home;
