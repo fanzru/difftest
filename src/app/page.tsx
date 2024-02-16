@@ -45,7 +45,7 @@ for (let i = 1; i <= 100; i++) {
 
   const question: QuestionData = {
     id: i,
-    question: ` \n${num1}\n${num2}\n`,
+    question: `\n${num1}\u00A0\u00A0\u00A0${num2}\n`,
     options: ['sama', 'beda'],
     answer: 'beda' // Jika angka berbeda, jawabannya akan selalu 'beda'
   };
