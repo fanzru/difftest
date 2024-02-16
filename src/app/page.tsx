@@ -45,7 +45,7 @@ for (let i = 1; i <= 100; i++) {
 
   const question: QuestionData = {
     id: i,
-    question: `Soal ${i}:\n${num1}\n${num2}\ndua angka di atas hanya berbeda satu digit, sama atau beda?`,
+    question: ` \n${num1}\n${num2}\n`,
     options: ['sama', 'beda'],
     answer: 'beda' // Jika angka berbeda, jawabannya akan selalu 'beda'
   };
