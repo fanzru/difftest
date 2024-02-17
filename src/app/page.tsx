@@ -9,42 +9,135 @@ interface QuestionData {
   answer: string;
 }
 
-function isOneDigitDifference(num1: number, num2: number): boolean {
-  const str1 = num1.toString();
-  const str2 = num2.toString();
-  let diffCount = 0;
+// function isOneDigitDifference(num1: number, num2: number): boolean {
+//   const str1 = num1.toString();
+//   const str2 = num2.toString();
+//   let diffCount = 0;
 
-  if (str1.length !== str2.length) {
-    return false;
-  }
+//   if (str1.length !== str2.length) {
+//     return false;
+//   }
 
-  for (let i = 0; i < str1.length; i++) {
-    if (str1[i] !== str2[i]) {
-      diffCount++;
-    }
-    if (diffCount > 1) {
-      return false;
-    }
-  }
+//   for (let i = 0; i < str1.length; i++) {
+//     if (str1[i] !== str2[i]) {
+//       diffCount++;
+//     }
+//     if (diffCount > 1) {
+//       return false;
+//     }
+//   }
 
-  return diffCount === 1;
-}
+//   return diffCount === 1;
+// }
+
+// const generateQuestionsData = (): QuestionData[] => {
+//   const questionsData: QuestionData[] = [];
+
+//   for (let i = 1; i <= 100; i++) {
+//     const num1 = Math.floor(Math.random() * 100000000);
+//     let num2 = num1;
+//     while (num2 === num1 || !isOneDigitDifference(num1, num2)) {
+//       num2 = Math.floor(Math.random() * 100000000);
+//     }
+
+//     const question: QuestionData = {
+//       id: i,
+//       question: `\n${num1}\u00A0\u00A0\u00A0${num2}\n`,
+//       options: ['sama', 'beda'],
+//       answer: 'beda'
+//     };
+
+//     questionsData.push(question);
+//   }
+
+//   return questionsData;
+// };
+
+// function oneDigitDiffer(num: number): number {
+//   const numStr = num.toString();
+//   const len = numStr.length;
+//   for (let i = 0; i < len; i++) {
+//     for (let j = 0; j < 10; j++) {
+//       if (j !== parseInt(numStr[i])) {
+//         const newNumStr = numStr.substring(0, i) + j.toString() + numStr.substring(i + 1);
+//         const newNum = parseInt(newNumStr, 10);
+//         if (newNum !== num) {
+//           return newNum;
+//         }
+//       }
+//     }
+//   }
+//   return num;  // No one-digit difference found
+// }
+
+// const generateQuestionsData = (): QuestionData[] => {
+//   const questionsData: QuestionData[] = [];
+
+//   for (let i = 1; i <= 100; i++) {
+//     const isSame = Math.random() < 0.5; // Randomly decide if the numbers should be the same
+
+//     let num1: number, num2: number;
+//     if (isSame) {
+//       num1 = Math.floor(Math.random() * 100000000);
+//       num2 = num1; // If they should be the same, simply assign num2 = num1
+//     } else {
+//       num1 = Math.floor(Math.random() * 100000000);
+//       num2 = oneDigitDiffer(num1); // If they should be different, use the oneDigitDiffer function
+//     }
+
+//     const question: QuestionData = {
+//       id: i,
+//       question: `\n${num1}\u00A0\u00A0\u00A0${num2}\n`,
+//       options: ['sama', 'beda'],
+//       answer: isSame ? 'sama' : 'beda', // Determine the answer based on whether they are the same or different
+//     };
+
+//     questionsData.push(question);
+//   }
+
+//   return questionsData;
+// };
+
+// const generateQuestionsData = (): QuestionData[] => {
+//   const questionsData: QuestionData[] = [];
+
+//   for (let i = 1; i <= 100; i++) {
+//     const num1 = Math.floor(Math.random() * 100000000);
+//     const num2 = oneDigitDiffer(num1);
+
+//     const question: QuestionData = {
+//       id: i,
+//       question: `\n${num1}\u00A0\u00A0\u00A0${num2}\n`,
+//       options: ['sama', 'beda'],
+//       answer: num1 !== num2 ? 'beda' : 'sama',
+//     };
+
+//     questionsData.push(question);
+//   }
+
+//   return questionsData;
+// };
 
 const generateQuestionsData = (): QuestionData[] => {
   const questionsData: QuestionData[] = [];
 
   for (let i = 1; i <= 100; i++) {
-    const num1 = Math.floor(Math.random() * 100000000);
+    let num1 = generateRandomNumberString();
     let num2 = num1;
-    while (num2 === num1 || !isOneDigitDifference(num1, num2)) {
-      num2 = Math.floor(Math.random() * 100000000);
+
+    // Gunakan Math.random() untuk menentukan apakah num2 akan diubah
+    if (Math.random() < 0.5) {
+      // Ubah satu angka pada num2
+      const indexToChange = Math.floor(Math.random() * num2.length);
+      const newDigit = (parseInt(num2[indexToChange]) + 1) % 10;
+      num2 = num2.substring(0, indexToChange) + newDigit + num2.substring(indexToChange + 1);
     }
 
     const question: QuestionData = {
       id: i,
       question: `\n${num1}\u00A0\u00A0\u00A0${num2}\n`,
       options: ['sama', 'beda'],
-      answer: 'beda'
+      answer: num1 === num2 ? 'sama' : 'beda',
     };
 
     questionsData.push(question);
@@ -52,6 +145,16 @@ const generateQuestionsData = (): QuestionData[] => {
 
   return questionsData;
 };
+
+// Fungsi untuk menghasilkan string angka acak
+const generateRandomNumberString = (): string => {
+  let result = '';
+  for (let i = 0; i < 10; i++) {
+    result += Math.floor(Math.random() * 10);
+  }
+  return result;
+};
+
 
 const Home: React.FC = () => {
   const [answers, setAnswers] = useState<string[]>(new Array(100).fill(''));
