@@ -25,15 +25,15 @@ const Home: React.FC = () => {
                 {
                     role: 'user',
                     content: `
-                        buatkan 50 soal untuk psikotest terkait test persamaan kata atau boleh lebih dari 1 kata (kata-kata sehari-hari) seacak mungkin!
+                        instruktusi:
+                        - buatkan 50 soal untuk psikotest terkait test persamaan kata atau boleh lebih dari 1 kata maksimal 2-3 kata, seacak mungkin!
+                        - dari 50 soal, buatkan 25 kata yang "sama" dan 25 kata yang "beda", dan acak letaknya jadi agar tidak bergrombol!!!
                         
                         cth: 
-                            - PT. MULYA ABADI : P.T. MULIA ABADI
                             - Johnson Abigael : Jhonson Abigael
                             - Ananda Affan : Ananda Affan
                         
-                        buatkan 50 soal acak ada yang kata pertama dan kedua 'sama' , dan ada yang 'beda'. 
-                        
+                     
                         notes: 
                             - tolong untuk yang beda dibuatkan bedanya maksimal 2 huruf saja dengan ditukar atau diganti
                             - pastikan panjang stringnya sama
@@ -50,19 +50,30 @@ const Home: React.FC = () => {
                     properties: {
                         list_soal: {
                         type: "array",
-                        description: "100 kata pertama",
+                        description: `
+                            buatkan word_1 dan word_2, dimana word 1 misal:
+                            
+                                Nomor 1. 
+                                    word_1: "Johnson Abigael" : word_2: "Jhonson Abigael", word_1 dan word_2 BEDA
+                                Nomor 2. 
+                                    word_2: "Ananda Affan" : word_2: "Ananda Affan", word_1 dan word_2 SAMA
+                            
+                            buatkan 50 nomor, nomor 1-25  word_1 dan word_2 harus sama dan nomor 26-50  harus beda, dengan letak nomor yang acak!!!
+                
+                        `,
                         items: {
                             type: "object",
                             properties: {
-                            word_1: {
-                                type: "string",
-                                description: "kata pertama"
-                            },
-                            word_2: {
-                                type: "string",
-                                description: "kata kedua"
-                            }
-                            },
+                            
+                                    word_1: {
+                                        type: "string",
+                                        description: "kata pertama"
+                                    },
+                                    word_2: {
+                                        type: "string",
+                                        description: "kata kedua"
+                                    }
+                                },
                             required: [
                             "word_1",
                             "word_2"
@@ -87,7 +98,7 @@ const Home: React.FC = () => {
                 headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer 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',
-                'Cookie': '__cf_bm=wEZ1tj7OQ.UQvaFtu2rpmIFaHvayLQ7FXh22XMHLfu0-1708238035-1.0-AUJTi0RaQNfYfHdjSb/KP6hMnjMXy/P4vZvb/3dxJmapCkt/JEWAyAsWriJCKsy5NUbk92C21jvpGcj/byzqD9g=; _cfuvid=uiHReGXAVgRf7fAzjZ7NNne5gtAg48dQ85KesaTEYys-1708234082636-0.0-604800000'
+               // 'Cookie': '__cf_bm=wEZ1tj7OQ.UQvaFtu2rpmIFaHvayLQ7FXh22XMHLfu0-1708238035-1.0-AUJTi0RaQNfYfHdjSb/KP6hMnjMXy/P4vZvb/3dxJmapCkt/JEWAyAsWriJCKsy5NUbk92C21jvpGcj/byzqD9g=; _cfuvid=uiHReGXAVgRf7fAzjZ7NNne5gtAg48dQ85KesaTEYys-1708234082636-0.0-604800000'
                 }
             }
             );
