@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react';
-import Question from './components/questions2';
+import Question from '../components/questions2';
 
 interface QuestionData {
   id: number;
@@ -13,8 +13,12 @@ const generateQuestionsData = (): QuestionData[] => {
   const questionsData: QuestionData[] = [];
 
   for (let i = 1; i <= 100; i++) {
-    let  num1 = generateRandomNumberString();
-
+    let num1: string;
+    if ( i % 2 === 0  ) {
+      num1 = generateRandomNumberString();
+    } else {
+      num1 = generateRandomNumberString2()
+    }
     let num2: string;
 
     num2 = num1;
@@ -49,6 +53,16 @@ const generateRandomNumberString = (): string => {
   return result;
 };
 
+const generateRandomNumberString2 = (): string => {
+  const allowedNumbers = [2, 7, 6, 9,8,5]; // Angka yang diizinkan
+  let result = '';
+  const randomIndex = Math.floor(Math.random() * allowedNumbers.length);
+  const selectedNumber = allowedNumbers[randomIndex];
+  for (let i = 0; i < 12; i++) {
+    result += selectedNumber;
+  }
+  return result;
+};
 
 const Home: React.FC = () => {
   const [answers, setAnswers] = useState<string[]>(new Array(100).fill(''));
